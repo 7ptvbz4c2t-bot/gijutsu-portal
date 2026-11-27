@@ -3,37 +3,89 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>技術科 授業アプリ集</title>
-  <meta name="description" content="中学校技術の授業で使えるWebサイトと自作アプリの一覧（教員向け）">
-  <link rel="stylesheet" href="assets/style.css">
+  <title>2進数・10進数 変換れんしゅう</title>
+  <style>
+    body { margin: 0; background: #f6f4ef; color: #22262b; font-family: "Hiragino Kaku Gothic ProN", "BIZ UDPGothic", "Meiryo", sans-serif; line-height: 1.7; }
+    main { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+    h1 { font-size: 1.4rem; margin: 0 0 4px; }
+    p.note { color: #5c636b; margin: 0 0 20px; font-size: .95rem; }
+    .box { background: #fff; border: 1px solid #dcd8cf; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    label { display: block; font-weight: 700; margin-bottom: 6px; }
+    input { width: 100%; box-sizing: border-box; font: inherit; font-size: 1.4rem; padding: 10px 12px; border: 1px solid #dcd8cf; border-radius: 8px; }
+    .bits { display: flex; gap: 6px; justify-content: center; margin-top: 8px; flex-wrap: wrap; }
+    .bit { width: 56px; text-align: center; }
+    .bit button { width: 56px; height: 56px; font-size: 1.5rem; font-weight: 700; border-radius: 8px; border: 2px solid #2f5d50; background: #fff; color: #2f5d50; cursor: pointer; }
+    .bit button[aria-pressed="true"] { background: #2f5d50; color: #fff; }
+    .bit small { display: block; color: #5c636b; font-size: .8rem; }
+    .err { color: #a33; min-height: 1.5em; margin: 6px 0 0; font-size: .9rem; }
+    a { color: #2f5d50; }
+  </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="wrap">
-      <h1>技術科 授業アプリ集</h1>
-      <p class="lead">授業で使えるWebサイトと自作アプリの一覧です。「開く」でそのまま使うか、「URLをコピー」で配布してください。</p>
+  <main>
+    <h1>2進数・10進数 変換れんしゅう</h1>
+    <p class="note">どちらかに数を入れると、もう一方が変わります。下のビットを押してもかえられます（0〜255）。</p>
+
+    <div class="box">
+      <label for="dec">10進数</label>
+      <input id="dec" inputmode="numeric" value="0">
+      <label for="bin" style="margin-top:12px">2進数（8ビット）</label>
+      <input id="bin" inputmode="numeric" value="00000000">
+      <p class="err" id="err" aria-live="polite"></p>
     </div>
-  </header>
 
-  <main class="wrap">
-    <section class="controls" aria-label="絞り込みと検索">
-      <label class="search">
-        <span class="visually-hidden">キーワードで検索</span>
-        <input id="search" type="search" placeholder="キーワードで検索（例：プログラミング、回路）" autocomplete="off">
-      </label>
-      <div class="filters" id="filters" role="group" aria-label="単元で絞り込み"></div>
-    </section>
-
-    <p class="count" id="count" aria-live="polite"></p>
-    <div class="grid" id="grid"></div>
-    <p class="empty" id="empty" hidden>条件に合うものがありません。単元やキーワードを変えてみてください。</p>
+    <div class="box">
+      <div class="bits" id="bits"></div>
+    </div>
   </main>
+  <script>
+    var dec = document.getElementById("dec");
+    var bin = document.getElementById("bin");
+    var err = document.getElementById("err");
+    var bitsEl = document.getElementById("bits");
+    var value = 0;
+    var buttons = [];
 
-  <footer class="site-footer">
-    <div class="wrap">教員向けページです。生徒の個人情報は扱いません。</div>
-  </footer>
+    for (var i = 7; i >= 0; i--) {
+      (function (pos) {
+        var wrap = document.createElement("div");
+        wrap.className = "bit";
+        var b = document.createElement("button");
+        b.type = "button";
+        b.setAttribute("aria-label", (1 << pos) + " の位");
+        b.addEventListener("click", function () { set(value ^ (1 << pos)); });
+        var s = document.createElement("small");
+        s.textContent = 1 << pos;
+        wrap.appendChild(b); wrap.appendChild(s);
+        bitsEl.appendChild(wrap);
+        buttons.push({ pos: pos, el: b });
+      })(i);
+    }
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="assets/app.js"></script>
+    function set(v, from) {
+      value = v;
+      err.textContent = "";
+      if (from !== "dec") dec.value = String(v);
+      if (from !== "bin") bin.value = v.toString(2).padStart(8, "0");
+      buttons.forEach(function (b) {
+        var on = (v >> b.pos) & 1;
+        b.el.textContent = on;
+        b.el.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+    }
+
+    dec.addEventListener("input", function () {
+      var t = dec.value.normalize("NFKC").trim();
+      if (!/^\d+$/.test(t) || +t > 255) { err.textContent = "0〜255 の整数を入れてください。"; return; }
+      set(+t, "dec");
+    });
+    bin.addEventListener("input", function () {
+      var t = bin.value.normalize("NFKC").trim();
+      if (!/^[01]{1,8}$/.test(t)) { err.textContent = "0 と 1 だけで、8けたまで入れてください。"; return; }
+      set(parseInt(t, 2), "bin");
+    });
+
+    set(0);
+  </script>
 </body>
 </html>

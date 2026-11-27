@@ -1,0 +1,37 @@
+[
+  {
+    "name": "2進数・10進数 変換れんしゅう",
+    "description": "10進数と2進数を相互に変換できる。デジタル化やビットの説明に使える。（サンプルの自作アプリ）",
+    "unit": "D",
+    "type": "app",
+    "url": "apps/binary/"
+  },
+  {
+    "name": "Scratch",
+    "description": "ブロックを組み合わせてプログラムを作る。計測・制御や双方向コンテンツのプログラミング入門に。",
+    "unit": "D",
+    "type": "site",
+    "url": "https://scratch.mit.edu/"
+  },
+  {
+    "name": "MakeCode for micro:bit",
+    "description": "micro:bit のプログラムをブラウザで作成し、シミュレーターで動きを確認できる。",
+    "unit": "D",
+    "type": "site",
+    "url": "https://makecode.microbit.org/"
+  },
+  {
+    "name": "PhET 回路キット（直流）",
+    "description": "電池・抵抗・電球をつないで、電流や電圧の様子を画面上で確かめられる。",
+    "unit": "C",
+    "type": "site",
+    "url": "https://phet.colorado.edu/ja/simulations/circuit-construction-kit-dc"
+  },
+  {
+    "name": "Tinkercad",
+    "description": "ブラウザで3Dモデルを作れる。製作品の構想や立体の表し方の学習に。",
+    "unit": "A",
+    "type": "site",
+    "url": "https://www.tinkercad.com/"
+  }
+]
